@@ -1,55 +1,82 @@
+// stats.js
+// This program reads integers from the user, stores them in an array,
+// calculates the mean (average) and median, and prints the results.
+// The user can enter "q" to stop entering numbers.
+
 const readline = require("readline");
 
+// Create the readline interface to read input from the console
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
 
-const numbers = [];
+// Array to store all valid integers entered by the user
+let numbers = [];
 
-function mean(arr) {
-  if (arr.length === 0) return null;
+// Function to calculate the mean (average)
+function calculateMean(arr) {
   let sum = 0;
-  for (const n of arr) sum += n;
+  for (let num of arr) {
+    sum += num;
+  }
   return sum / arr.length;
 }
 
-function median(arr) {
-  if (arr.length === 0) return null;
-  const sorted = [...arr].sort((a, b) => a - b);
-  const mid = Math.floor(sorted.length / 2);
+// Function to calculate the median
+function calculateMedian(arr) {
+  // Create a copy of the array and sort it
+  let sorted = [...arr].sort((a, b) => a - b);
+  let mid = Math.floor(sorted.length / 2);
 
-  if (sorted.length % 2 === 1) return sorted[mid];
-  return (sorted[mid - 1] + sorted[mid]) / 2;
+  // If the array length is even, average the two middle values
+  if (sorted.length % 2 === 0) {
+    return (sorted[mid - 1] + sorted[mid]) / 2;
+  } 
+  // If the array length is odd, return the middle value
+  else {
+    return sorted[mid];
+  }
 }
 
-function ask() {
+// Function to repeatedly ask the user for input
+function askForNumber() {
   rl.question("Enter an integer (or q to quit): ", (input) => {
-    const text = input.trim().toLowerCase();
 
-    if (text === "q") {
+    // Check if the user wants to quit
+    if (input.toLowerCase() === "q") {
+
+      // If no numbers were entered, display a message and exit
       if (numbers.length === 0) {
-        console.log("No numbers entered.");
+        console.log("No numbers were entered.");
       } else {
+        // Calculate and display results
         console.log("Numbers:", numbers);
-        console.log("Mean:", mean(numbers));
-        console.log("Median:", median(numbers));
+        console.log("Mean:", calculateMean(numbers));
+        console.log("Median:", calculateMedian(numbers));
       }
+
+      // Close the readline interface
       rl.close();
       return;
     }
 
-    const num = Number(text);
+    // Convert input to a number
+    let num = Number(input);
 
+    // Validate that the input is an integer
     if (!Number.isInteger(num)) {
-      console.log("Error: enter a whole number like 5 or -2, or q to quit.");
+      console.log("Invalid input. Please enter an integer.");
     } else {
+      // Store valid integer in the array
       numbers.push(num);
       console.log("Added:", num);
     }
 
-    ask();
+    // Ask for another number
+    askForNumber();
   });
 }
 
-ask();
+// Start the program
+askForNumber();
